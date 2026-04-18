@@ -24,22 +24,31 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
-        ];
+       // Kode jurusan tetap
+    $kodeJurusan = '55201';
+    
+    // Angkatan random antara 21-25
+    $angkatan = fake()->numberBetween(21, 25);
+    
+    // Urutan 3 digit (001 - 999)
+    $urutan = str_pad(fake()->unique()->numberBetween(1, 999), 3, '0', STR_PAD_LEFT);
+
+    return [
+        'name' => fake()->name(),
+        'npm' => $kodeJurusan . $angkatan . $urutan, // Hasil: 5520122001
+        'email' => fake()->unique()->safeEmail(),
+        'password' => bcrypt('password'),
+        // tambahkan field lain sesuai tabel users Anda
+    ];
     }
 
     /**
      * Indicate that the model's email address should be unverified.
      */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
-    }
+    // public function unverified(): static
+    // {
+    //     return $this->state(fn (array $attributes) => [
+    //         'email_verified_at' => null,
+    //     ]);
+    // }
 }

@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB; // Tambahkan ini jika tetap ingin pakai DB
+use App\Models\User; // Tambahkan ini untuk menggunakan Model
+use Faker\Factory as Faker;
 
 class UsersSeeder extends Seeder
 {
@@ -13,23 +15,25 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = \Faker\Factory::create();
+        $faker = Faker::create('id_ID');// Pakai locale Indonesia agar nama lebih relevan
 
-    for ($i = 1; $i <= 50; $i++) {
-        $angkatan = rand(21, 25);
-        $urutan = str_pad($i, 3, '0', STR_PAD_LEFT);
-        $npm = "55201{$angkatan}{$urutan}";
+        // Di dalam UsersSeeder.php
+        for ($i = 1; $i <= 50; $i++) {
+            $angkatan = rand(21, 25);
+    // Menggunakan $i memastikan urutan 001, 002, dst tidak kembar dalam satu kali jalan
+            $urutan = str_pad($i, 3, '0', STR_PAD_LEFT); 
+            $npm = "55201{$angkatan}{$urutan}";
 
-        DB::table('users')->insert([
-            'npm' => $npm,
-            'username' => $faker->userName,
-            'first_name' => $faker->firstName,
-            'last_name' => $faker->lastName,
-            'email' => $faker->unique()->safeEmail,
-            'password' => Hash::make('password'),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-    }
-}
+            User::updateOrCreate(
+                ['npm' => $npm], // Cari berdasarkan NPM
+                [
+                    'username'   => $faker->unique()->userName,
+                    'first_name' => $faker->firstName,
+                    'last_name'  => $faker->lastName,
+                    'email'      => $faker->unique()->safeEmail,
+                    'password'   => Hash::make('password'),
+                ]
+            );
+         }
+    }  
 }

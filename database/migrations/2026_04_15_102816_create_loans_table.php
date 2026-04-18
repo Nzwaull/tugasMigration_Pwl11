@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
     $table->id();
-    $table->integer('user_npm');
+    $table->string('user_npm');
     $table->date('loan_at');
     $table->date('return_at')->nullable();
     $table->timestamps();
